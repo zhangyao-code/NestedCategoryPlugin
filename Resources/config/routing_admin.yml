@@ -1,0 +1,7 @@
+nested_categoty:
+    path:     /nested_categoty
+    defaults: { _controller: CategoryPlugin:Default:index }
+
+nested_category_create:
+    path:     /nested_categoty/create/{parentId}
+    defaults: { _controller: CategoryPlugin:Default:create, parentId:'' }

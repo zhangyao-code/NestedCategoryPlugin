@@ -1,0 +1,38 @@
+<li id="category-table-body" data-sort-url="{{ path('admin_category_sort') }}">
+  {% if categories is not empty %}
+    {{ _self.showCategoryTree(categories, false) }}
+  {% else %}
+    <div class="row empty">{{'admin.category_manage.empty'|trans}}</div>
+  {% endif %}
+</li>
+
+{% do load_script('category/tbody') %}
+
+
+{% macro showCategoryTree(categories, isCollapseChildren) %}
+  <ul class="list-table sortable-list">
+    {% for category in categories %}
+      {% set isParent = category.children|default(null) is not empty %}
+      {% set isRoot = category.depth == 1 %}
+      <li id="{{ category.id }}" class="tr" data-name="{{ category.name }}" data-id="{{ category.id }}" data-parent-id="{{ category.parentId }}" style="display: {{ (not isRoot and isCollapseChildren) ? 'none' : 'block' }}">
+        <div class="row{{ (isParent and isCollapseChildren) ? ' row-collapse' : ' row-expand' }}">
+          <div class="td col-md-7 name sort-handle" style="padding-left: {{ 24 * (category.depth - 1 ) }}px; overflow: hidden; width: 57%">
+            {% if isParent %}
+              <i class="list-table-tree-icon glyphicon glyphicon-chevron-{{ isCollapseChildren ? 'right' : 'down' }}"></i>
+            {% else %}
+              <i class="list-table-tree-icon"></i>
+            {% endif %}
+            {{ category.name }}
+          </div>
+          <div class="td col-md-3 operation" style='width: 26%'>
+              <a href="javascript:;" class="btn btn-default btn-sm" data-url="{{ path('nested_category_create', {parentId:category.id}) }}" data-toggle="modal" data-target="#modal"><i class="glyphicon glyphicon-plus"></i> {{'创建子分类'|trans}}</a>
+
+          </div>
+        </div>
+        {% if isParent %}
+          {{ _self.showCategoryTree(category.children, isCollapseChildren) }}
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+{% endmacro %}

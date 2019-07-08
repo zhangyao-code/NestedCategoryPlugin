@@ -1,0 +1,22 @@
+{% extends 'bootstrap-modal-layout.html.twig' %}
+
+{% do script(['categoryplugin/js/create/index.js']) %}
+{% set modalSize = 'large' %}
+{% block title %}{{ 'offline_activity.enrollment'|trans }}{% endblock %}
+{% block body %}
+    <form id="create-form" class="form-horizontal"
+          action="{{ path('nested_category_create', {parentId:parentId|default('')}) }}">
+        <div class="form-group">
+            <div class="col-md-2 control-label">
+                <label>{{ 'project_plan.item.course_title'|trans }}</label>
+            </div>
+            <div class="col-md-9">
+                <input class="form-control" type="text" name="name" value="">
+            </div>
+        </div>
+    </form>
+{% endblock %}
+{% block footer %}
+    <a id="create-btn" class="btn btn-primary pull-right">保存</a>
+    <button type="button" class="btn btn-link pull-right" data-dismiss="modal">{{ 'form.btn.cancel'|trans }}</button>
+{% endblock %}

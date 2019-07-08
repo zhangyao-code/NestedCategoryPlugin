@@ -1,0 +1,54 @@
+{% extends 'admin/layout.html.twig' %}
+  {% import "macro.html.twig" as web_macro %}
+{% block title %}
+{% endblock %}
+{% block container %}
+  <div class="row">
+    {% block content %}
+      <div class="col-md-2">
+        {% block sidebar %}
+        {% endblock %}
+      </div>
+
+      <div class="col-md-10 col-md-offset-2 cd-layout-aside">
+        <div class="cd-layout-adside_content">
+          <div class="page-header clearfix">
+            {% block page_flash_message %}
+
+            {% endblock %}
+            <h1 class="pull-left">
+              {% block page_title %}
+              {% endblock %}
+            </h1>
+            <div class="pull-right">
+
+              {% block page_buttons %}
+
+              {% endblock %}
+
+            </div>
+          </div>
+
+          {% block content_header %}{% endblock %}
+
+          {% block capsule %}{% endblock %}
+
+          {% block main %}
+            <a href="javascript:;" class="btn btn-default btn-sm" data-url="{{ path('nested_category_create') }}" data-toggle="modal" data-target="#modal"><i class="glyphicon glyphicon-plus"></i> {{'创建分类'|trans}}</a>
+
+            <ul class="list-table" id="category-table" style="margin-bottom: 0">
+              <li class="th" style="border-top: none">
+                <div class="row">
+                  <div class="td col-md-7">{{'admin.category_manage.name_th'|trans}}</div>
+                  <div class="td col-md-3">{{'admin.category_manage.operate_th'|trans}}</div>
+                </div>
+              </li>
+              {% include 'CategoryPlugin:Default:tbody.html.twig' %}
+            </ul>
+          {% endblock %}
+        </div>
+      </div>
+
+    {% endblock %}
+  </div>
+{% endblock %}
