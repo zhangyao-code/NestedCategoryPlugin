@@ -6,8 +6,7 @@
   {% endif %}
 </li>
 
-{% do load_script('category/tbody') %}
-
+{% do load_script('categoryplugin/controller/category/tbody') %}
 
 {% macro showCategoryTree(categories, isCollapseChildren) %}
   <ul class="list-table sortable-list">
@@ -25,8 +24,9 @@
             {{ category.name }}
           </div>
           <div class="td col-md-3 operation" style='width: 26%'>
-              <a href="javascript:;" class="btn btn-default btn-sm" data-url="{{ path('nested_category_create', {parentId:category.id}) }}" data-toggle="modal" data-target="#modal"><i class="glyphicon glyphicon-plus"></i> {{'创建子分类'|trans}}</a>
-
+              <a href="javascript:;" class="btn btn-default btn-sm" data-url="{{ path('nested_category_create', {parentId:category.id}) }}" data-toggle="modal" data-target="#modal">{{'创建子分类'|trans}}</a>
+            <a href="javascript:;" class="btn btn-default btn-sm" data-url="{{ path('nested_category_update',{categoryId:category.id}) }}" data-toggle="modal" data-target="#modal">{{'编辑'|trans}}</a>
+            <a href="javascript:;" class="btn btn-default btn-sm js-btn-delete" data-url="{{ path('nested_category_delete',{categoryId:category.id}) }}" >{{'删除'|trans}}</a>
           </div>
         </div>
         {% if isParent %}

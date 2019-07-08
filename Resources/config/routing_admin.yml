@@ -5,3 +5,11 @@ nested_categoty:
 nested_category_create:
     path:     /nested_categoty/create/{parentId}
     defaults: { _controller: CategoryPlugin:Default:create, parentId:'' }
+
+nested_category_update:
+    path:     /nested_categoty/{categoryId}/update
+    defaults: { _controller: CategoryPlugin:Default:update}
+
+nested_category_delete:
+    path:     /nested_categoty/{categoryId}/delete
+    defaults: { _controller: CategoryPlugin:Default:delete}

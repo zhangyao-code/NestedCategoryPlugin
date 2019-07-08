@@ -5,13 +5,13 @@
 {% block title %}{{ 'offline_activity.enrollment'|trans }}{% endblock %}
 {% block body %}
     <form id="create-form" class="form-horizontal"
-          action="{{ path('nested_category_create', {parentId:parentId|default('')}) }}">
+          action="{{ path('nested_category_update', {categoryId:category.id|default('')}) }}">
         <div class="form-group">
             <div class="col-md-2 control-label">
                 <label for="name">{{ '分类名称'|trans }}</label>
             </div>
             <div class="col-md-9">
-                <input class="form-control" type="text" name="name" value="">
+                <input class="form-control" type="text" name="name" value="{{ category.name|default() }}">
             </div>
         </div>
     </form>

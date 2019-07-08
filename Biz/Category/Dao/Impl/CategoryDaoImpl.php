@@ -39,7 +39,7 @@ class CategoryDaoImpl extends GeneralDaoImpl implements CategoryDao
 
     public function findAll()
     {
-        $sql = "SELECT * FROM {$this->table()} ORDER BY id ASC";
+        $sql = "SELECT * FROM {$this->table()} ORDER BY lft ASC";
 
         return $this->db()->fetchAll($sql) ?: array();
     }
@@ -90,6 +90,14 @@ class CategoryDaoImpl extends GeneralDaoImpl implements CategoryDao
         $sql = "SELECT name FROM nested_category WHERE rgt = lft + 1;";
 
         return $this->db()->fetchAll($sql) ?: array();
+    }
+
+    public function deleteByLftAndRgt($lft, $rgt)
+    {
+        $sql = "DELETE FROM {$this->table} WHERE lft>=? and rgt<= ?";
+        $result = $this->db()->executeUpdate($sql, array($lft, $rgt));
+
+        return $result;
     }
 
     public function declares()

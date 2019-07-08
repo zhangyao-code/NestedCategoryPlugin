@@ -23,12 +23,19 @@ class CategoryServiceImpl extends BaseService implements CategoryService
 
     }
 
+//    public function microtime_float()
+//    {
+//        list($usec, $sec) = explode(" ", microtime());
+//        return ((float)$usec + (float)$sec);
+//    }
+
     public function createChildrenCategory($category,$parentId)
     {
         $parent = $this->getCategory($parentId);
-        try {
-            $this->beginTransaction();
 
+        try {
+
+            $this->beginTransaction();
             $this->batchUpdateRgt($parent['rgt']-1,2);
             $this->batchUpdateLft($parent['rgt'],2);
             $category['lft'] =$parent['rgt'];
@@ -44,6 +51,30 @@ class CategoryServiceImpl extends BaseService implements CategoryService
             throw $e;
         }
     }
+
+    public function updateCategory($categoryId,$category)
+    {
+        return $this->getCategoryDao()->update($categoryId,$category);
+    }
+
+    public function deleteCategory($categoryId)
+    {
+        try {
+            $this->beginTransaction();
+
+            $category = $this->getCategory($categoryId);
+            $result = $this->deleteByLftAndRgt($category['lft'],$category['rgt']);
+            $this->batchUpdateRgt($category['rgt'],$category['lft']-($category['rgt']+1));
+            $this->batchUpdateLft($category['rgt'],$category['lft']-($category['rgt']+1));
+            $this->commit();
+
+            return $result;
+        } catch (\Exception $e) {
+            $this->rollback();
+            throw $e;
+        }
+    }
+
 
     public function getCategory($id){
         return $this->getCategoryDao()->get($id);
@@ -141,7 +172,7 @@ class CategoryServiceImpl extends BaseService implements CategoryService
     /**
      * @param $id
      * @return array
-     * 嵌套方式通过父节点检索底下正棵树
+     * 嵌套方式通过父节点检索底下整棵树
      */
     public function findCategoryChildPath($id)
     {
@@ -151,7 +182,7 @@ class CategoryServiceImpl extends BaseService implements CategoryService
     /**
      * @param $id
      * @return array
-     * Code方式通过父节点检索底下正棵树
+     * Code方式通过父节点检索底下整棵树
      */
     public function findCategoryChildPathByCategoryCode($id)
     {
@@ -176,6 +207,11 @@ class CategoryServiceImpl extends BaseService implements CategoryService
     public function findLeafNodeCategories()
     {
         return $this->getCategoryDao()->findLeafNodeCategories();
+    }
+
+    public function deleteByLftAndRgt($lft, $rgt)
+    {
+        return $this->getCategoryDao()->deleteByLftAndRgt($lft, $rgt);
     }
 
     protected function makeCategoryTree(&$tree, &$categories, $parentId)

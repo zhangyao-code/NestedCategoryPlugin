@@ -1,0 +1,61 @@
+－－－－新增分类－－－－
+嵌套式：
+新增一级分类只需要新增一条数据；
+新增子分类需要就一级分类的位置决定更新的lft和rgt位置的数据量（当在第一个父分类或父分类位置很靠前,那么新增子分类相当于更新全表）
+
+实验结果： 本地当数据量达到9500条时添加节点几乎更新整张表情况下操作时间也很小(55783微妙／1秒 = 1000毫秒 = 1000,000微秒)
+
+Code式：
+不管新增一级分类或子分类只需要改动一条数据
+
+－－－－删除分类－－－－
+嵌套式：
+删除一级分更新数据量需要就分类位置而定每次需要更新，
+新增子分类需要就一级分类的位置决定更新的lft和rgt位置的条数（当在第一个父分类或父分类位置很靠前,那么新增子分类相当于更新全表）
+
+实验结果： 本地当数据量达到9500条时删除节点几乎更新整张表情况下操作时间也很小（58687微妙／1秒 = 1000毫秒 = 1000,000微秒）
+
+
+Code式：
+不管新增一级分类或子分类只需要改动一条数据
+
+
+－－－－检索单一路径－－－－
+嵌套式：
+SELECT parent.name FROM `nested_category` AS node,`nested_category` AS parent WHERE node.lft BETWEEN parent.lft AND parent.rgt AND node.id = ? ORDER BY parent.lft
+
+Code式：
+$category = $this->getCategory($id);
+$ids = explode('.',$category['categoryCode']);
+$ids= array_filter($ids);
+$marks = str_repeat('?,', count($ids) - 1).'?';
+$sql = "SELECT name FROM {$this->table()} WHERE id IN ({$marks}) order by field(id,{$marks}) ";
+
+
+－－－－通过父节点检索底下整棵树－－－－
+嵌套式：
+SELECT node.name FROM `nested_category` AS node,`nested_category` AS parent WHERE node.lft BETWEEN parent.lft AND parent.rgt AND parent.id = ? ORDER BY node.lft
+
+Code式：
+$category = $this->getCategory($id);
+if($category['parentId']){
+    $categories = $this->searchCategories(array('categoryCodeLike'=> '%'.$category['categoryCode'].'%'),array('id'=>'ASC'),0,PHP_INT_MAX,array('name'));
+}else{
+    $categories = array();
+    $treeArray = $this->searchCategories(array('parentId'=> $id),array('id'=>'ASC'),0,PHP_INT_MAX,array('categoryCode'));
+    foreach ($treeArray as $category){
+        $childArray = $this->searchCategories(array('categoryCodeLike'=> '%'.$category['categoryCode'].'%'),array('id'=>'ASC'),0,PHP_INT_MAX,array('name'));
+        $categories = array_merge($categories,$childArray);
+    }
+}
+
+－－－－检索叶子节点－－－－
+嵌套式：
+SELECT name FROM nested_category WHERE rgt = lft + 1;
+
+Code式：
+Code的方式获取叶子节点比较困难。
+
+
+
+结论： 嵌套式添加节点或删除节点的时候在10000左右的数据下并不会有什么更新数据性能上的影响。相比于Code的方式查询更加的方便。

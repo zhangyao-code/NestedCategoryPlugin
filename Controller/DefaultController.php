@@ -2,17 +2,15 @@
 
 namespace CategoryPlugin\Controller;
 
-use AppBundle\Common\Paginator;
 use AppBundle\Controller\BaseController;
 use CategoryPlugin\Biz\Category\Service\Impl\CategoryServiceImpl;
+use Codeages\Biz\Framework\Service\Exception\NotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 
 class DefaultController extends BaseController
 {
     public function indexAction(Request $request)
     {
-        var_dump( $this->getCategoryService()->findLeafNodeCategoriesByCategoryCode());
-        exit();
         $categories = $this->getCategoryService()->getCategoryStructureTree();
 
         return $this->render('CategoryPlugin:Default:index.html.twig', array(
@@ -40,11 +38,33 @@ class DefaultController extends BaseController
                 $this->getCategoryService()->createChildrenCategory($category,$parentId);
 
             }
+
              return $this->createJsonResponse(true);
          }
         return $this->render('CategoryPlugin:Default:create-modal.html.twig', array(
             'parentId' => $parentId
         ));
+    }
+
+    public function updateAction(Request $request,$categoryId)
+    {
+        $category = $this->getCategoryService()->getCategory($categoryId);
+        if($request->getMethod()== 'POST'){
+            $this->getCategoryService()->updateCategory($categoryId,$request->request->all());
+            return $this->createJsonResponse(true);
+        }
+
+        return $this->render('CategoryPlugin:Default:update-modal.html.twig', array(
+            'category' => $category
+        ));
+    }
+
+    public function deleteAction(Request $request,$categoryId)
+    {
+        $this->getCategoryService()->deleteCategory($categoryId);
+
+        return $this->createJsonResponse(true);
+
     }
 
     /**
