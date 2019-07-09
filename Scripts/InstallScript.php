@@ -8,7 +8,7 @@ class InstallScript extends BaseInstallScript
     {
         $connection = $this->getConnection();
         $connection->exec("
-          CREATE TABLE `nested_category` (
+          CREATE TABLE IF NOT EXISTS `nested_category` (
               `id` INT(10) NOT NULL AUTO_INCREMENT COMMENT 'ID',
               `name` varchar(255) NOT NULL COMMENT '名称',
               `lft` INT(10) NOT NULL COMMENT '左',
