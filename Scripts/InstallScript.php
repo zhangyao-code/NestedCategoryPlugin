@@ -7,13 +7,20 @@ class InstallScript extends BaseInstallScript
     public function install()
     {
         $connection = $this->getConnection();
-        /* create you database table
-        $connection->exec("DROP TABLE IF EXISTS `cash_orders_log`;");
         $connection->exec("
-            CREATE TABLE IF NOT EXISTS `cash_orders_log` (
-            `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-            PRIMARY KEY (`id`)
-          ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-        ");*/
+          CREATE TABLE `nested_category` (
+              `id` INT(10) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+              `name` varchar(255) NOT NULL COMMENT '名称',
+              `lft` INT(10) NOT NULL COMMENT '左',
+              `rgt` INT(10) NOT NULL COMMENT '右',
+              `parentId` int(11) NOT NULL DEFAULT '0',
+              `categoryCode` varchar(255) NOT NULL DEFAULT '0' COMMENT '内部编码',
+              `createdTime` INT(10) unsigned NOT NULL DEFAULT '0'  COMMENT '创建时间',
+              `updatedTime` INT(10) unsigned NOT NULL DEFAULT '0'  COMMENT '最后更新时间',
+              PRIMARY KEY (`id`),
+              UNIQUE KEY `categoryCode` (`categoryCode`)
+              ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='分类';
+            ");
+
     }
 }
